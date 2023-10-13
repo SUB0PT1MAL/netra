@@ -1,48 +1,28 @@
-// Configure MongoDB connection 
-const mongoUrl = 'mongodb://192.168.1.111:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.0.1';
+const express = require('express');
+const { MongoClient } = require('mongodb');
+const app = express();
 
-// Backend API route
-const apiUrl = '/api/search'; 
+const mongoUrl = 'mongodb://192.168.1.111:27017'; 
 
-// Update submit handler
-searchForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
+app.use(express.json());
 
-  const searchTerm = searchBox.value;
-
-  const response = await fetch(apiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      searchTerm 
-    })
-  });
-  
-  const data = await response.json();
-  
-  displayResults(data);
-});
-
-// Backend API route implementation
 app.post('/api/search', async (req, res) => {
-  const { searchTerm } = req.body;
+  const { extraTerm, accountTerm, passwordTerm } = req.body;
 
-  // Connect to MongoDB
   const client = await MongoClient.connect(mongoUrl);
+  const db = client.db('mydatabase');
 
-  // Query database
-  const db = client.db('mydatabase'); 
-  const results = await db.collection('users').find({ 
+  const results = await db.collection('users').find({
     $or: [
-      { extra: { $regex: searchTerm } }, 
-      { account: { $regex: searchTerm } },
-      { password: { $regex: searchTerm } }
+      { extra: { $regex: extraTerm } },
+      { account: { $regex: accountTerm } },
+      { password: { $regex: passwordTerm } } 
     ]
   }).toArray();
 
-  res.json(results);
-
   client.close();
+
+  res.json(results);
 });
+
+app.listen(3000);

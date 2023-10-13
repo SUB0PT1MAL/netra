@@ -6,15 +6,54 @@
 <body>
 
   <h1>Search</h1>
-  
-  <form>
-    <input type="text" id="searchbox" placeholder="Search...">
+
+  <form id="search-form">
+    <input type="text" id="search-extra" placeholder="Search extra...">
+    <input type="text" id="search-account" placeholder="Search account...">  
+    <input type="text" id="search-password" placeholder="Search password...">
+    
     <button type="submit">Search</button>
   </form>
-  
+
   <div id="results"></div>
 
-  <script type="text/javascript" src="script.js"></script>
+  <script>
+    const form = document.getElementById('search-form');
+    const extraSearch = document.getElementById('search-extra');
+    const accountSearch = document.getElementById('search-account');
+    const passwordSearch = document.getElementById('search-password');
+    const resultsDiv = document.getElementById('results');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const extraTerm = extraSearch.value;
+      const accountTerm = accountSearch.value;
+      const passwordTerm = passwordSearch.value;
+
+      const response = await fetch('/api/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          extraTerm,
+          accountTerm,
+          passwordTerm
+        })
+      });
+
+      const data = await response.json();
+
+      displayResults(data);
+    });
+
+    // Display results
+    function displayResults(results) {
+      // Loop through results and add to HTML
+    }
+
+  </script>
 
 </body>
 </html>
