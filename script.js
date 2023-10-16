@@ -1,28 +1,27 @@
-const express = require('express');
-const { MongoClient } = require('mongodb');
-const app = express();
+document.getElementById("searchForm").addEventListener("submit", function(event) {
+    event.preventDefault();
 
-const mongoUrl = 'mongodb://192.168.1.111:27017'; 
+    var user = document.getElementById("user").value;
+    var domain = document.getElementById("domain").value;
 
-app.use(express.json());
-
-app.post('/api/search', async (req, res) => {
-  const { extraTerm, accountTerm, passwordTerm } = req.body;
-
-  const client = await MongoClient.connect(mongoUrl);
-  const db = client.db('mydatabase');
-
-  const results = await db.collection('users').find({
-    $or: [
-      { extra: { $regex: extraTerm } },
-      { account: { $regex: accountTerm } },
-      { password: { $regex: passwordTerm } } 
-    ]
-  }).toArray();
-
-  client.close();
-
-  res.json(results);
+    // Make an AJAX request to the server
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", `/search?user=${user}&domain=${domain}`, true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            var results = JSON.parse(xhr.responseText);
+            displayResults(results);
+        }
+    };
+    xhr.send();
 });
 
-app.listen(3000);
+function displayResults(results) {
+    var resultsDiv = document.getElementById("results");
+    resultsDiv.innerHTML = "";
+    results.forEach(function(result) {
+        var resultDiv = document.createElement("div");
+        resultDiv.textContent = `User: ${result.user}, Domain: ${result.domain}, Password: ${result.password}`;
+        resultsDiv.appendChild(resultDiv);
+    });
+}

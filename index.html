@@ -1,59 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Search Page</title>
+    <meta charset="UTF-8">
+    <title>Search Database</title>
 </head>
 <body>
+    <h1>Search Database</h1>
+    <form id="searchForm">
+        <label for="user">User:</label>
+        <input type="text" id="user" name="user">
+        <label for="domain">Domain:</label>
+        <input type="text" id="domain" name="domain">
+        <button type="submit">Search</button>
+    </form>
+    <div id="results"></div>
 
-  <h1>Search</h1>
-
-  <form id="search-form">
-    <input type="text" id="search-extra" placeholder="Search extra...">
-    <input type="text" id="search-account" placeholder="Search account...">  
-    <input type="text" id="search-password" placeholder="Search password...">
-    
-    <button type="submit">Search</button>
-  </form>
-
-  <div id="results"></div>
-
-  <script>
-    const form = document.getElementById('search-form');
-    const extraSearch = document.getElementById('search-extra');
-    const accountSearch = document.getElementById('search-account');
-    const passwordSearch = document.getElementById('search-password');
-    const resultsDiv = document.getElementById('results');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const extraTerm = extraSearch.value;
-      const accountTerm = accountSearch.value;
-      const passwordTerm = passwordSearch.value;
-
-      const response = await fetch('/api/search', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          extraTerm,
-          accountTerm,
-          passwordTerm
-        })
-      });
-
-      const data = await response.json();
-
-      displayResults(data);
-    });
-
-    // Display results
-    function displayResults(results) {
-      // Loop through results and add to HTML
-    }
-
-  </script>
-
+    <script src="script.js"></script>
 </body>
 </html>
